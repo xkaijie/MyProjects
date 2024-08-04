@@ -1,0 +1,44 @@
+import pandas as pd
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.cluster import KMeans, DBSCAN
+from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
+import matplotlib.pyplot as plt
+
+# Load data
+data = pd.read_csv('credit_card_data.csv')
+
+# Data preparation
+data = data.drop(columns=['CustomerID'])
+data['CreditLimit'].fillna(data['CreditLimit'].mean(), inplace=True)
+data['MinimumPayment'].fillna(method='bfill', inplace=True)
+log_features = ['Feature1', 'Feature2']  # List of skewed features
+data[log_features] = data[log_features].apply(lambda x: np.log1p(x))
+
+# Feature scaling
+scaler = StandardScaler()
+X = scaler.fit_transform(data)
+
+# K-Means Clustering
+kmeans = KMeans(n_clusters=3, random_state=42)
+kmeans_clusters = kmeans.fit_predict(X)
+data['KMeansCluster'] = kmeans_clusters
+
+# Hierarchical Clustering
+linked = linkage(X, method='ward')
+plt.figure(figsize=(10, 7))
+dendrogram(linked)
+plt.title('Dendrogram for Hierarchical Clustering')
+plt.show()
+
+hc_clusters = fcluster(linked, t=3, criterion='maxclust')
+data['HCCluster'] = hc_clusters
+
+# DBSCAN
+dbscan = DBSCAN(eps=0.5, min_samples=5)
+dbscan_clusters = dbscan.fit_predict(X)
+data['DBSCANCluster'] = dbscan_clusters
+
+# Analysis
+print(data.groupby('KMeansCluster').mean())
+print(data.groupby('HCCluster').mean())
+print(data.groupby('DBSCANCluster').mean())

@@ -1,0 +1,103 @@
+/* Adjust the right alignment of the filter container */
+.filter-container {
+  display: flex;
+  justify-content: flex-end; /* Align filters to the end */
+  gap: 8px; /* Reduce the gap between filter elements for closer appearance */
+  padding: 0;
+  margin: 0;
+}
+
+/* Modify the individual filter group style if needed */
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the label over the select */
+  line-height:1.5;
+}
+
+/* Style for the filter label */
+.filter-label {
+  display: block;
+  color: white; /* Color of the label text */
+  text-align: center; /* Center the label text */
+}
+
+/* Style for the filter select elements */
+.filter-select {
+  width: 180px; /* Fixed width for select elements */
+  margin-bottom: 10px; /* Space below select elements */
+}
+
+/* Style targeting the last filter select to remove any margin to the right */
+.filter-select:last-child {
+  margin-right: 0;
+}
+
+/* Style to control the overall header container */
+.header .container-fluid {
+  width: 100%; /* Force the container to full width */
+  max-width: none; /* If a max-width is set, override it */
+  padding-right: 0; /* Remove padding to ensure elements can go to the edge */
+}
+
+/* Style for the header breadcrumb container */
+.header .header-body .row .col-lg-6:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.header .header-body .row .col-lg-6:last-child {
+  flex-grow: 1; /* Allow the container to grow and occupy available space */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Align filters to the end */
+  padding-right: 0; /* Ensure no padding is pushing the filters away from the edge */
+  margin-right: 0; /* Ensure no margin is pushing the filters away from the edge */
+}
+
+
+.navbar-expand-lg {
+  flex-wrap: nowrap; /* Prevent the navbar from wrapping */
+}
+
+/* Move the modebar to the bottom of the plot (plotly tool on hover) */
+.modebar {
+  top: auto !important;
+  bottom: 0 !important;
+}
+
+/* Override line-height for breadcrumb items */
+.breadcrumb-item,
+.nav-link-text {
+  line-height: 1.5; /* Set line-height to 1.5 */
+}
+
+.btnExport{
+  line-height: 1.5;
+}
+
+/* Increase Decrease Metrics % */
+.metric-diff {
+  display: inline-block;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.metric-diff.increase {
+  color: green;  /* Green color for increase */
+}
+
+.metric-diff.decrease {
+  color: red;    /* Red color for decrease */
+}
+
+.metric-diff.no-change {
+  color: gray;   /* Gray color for no change */
+}
+.centered-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: -20px;
+}

@@ -1,0 +1,60 @@
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: top; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 58%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto; /* Adjust width as necessary */
+    height: auto; /* Height is set to auto to allow for flexible content */
+    margin-top: 0;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content */
+  .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%; /* You can adjust the width to fit your content */
+    max-width: none;
+    max-height: 100vh;/* for example, max height with some space from the top & bottom */
+    overflow-y: auto; /* Enable vertical scrolling */
+    line-height: 1.5;
+  }
+  
+  .btn-help {
+    position: fixed; /* or 'absolute' */
+    top: 50%;
+    left: 96%;
+    transform: translate(-50%, -50%);
+    background-color: #5e72e4; /* Bootstrap info blue, for example */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer; /* Indicates the item is clickable */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Optional: adds depth */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transition for hover effects */
+    line-height: 1.5;
+  }
+  
+  .btn-help:hover {
+    background-color: #2bcbba; /* Darker shade on hover */
+    transform: translate(-50%, -50%) scale(1.05); /* Slightly larger on hover */
+  }
+  
+  .btn-help:focus {
+    outline: none; /* Removes the outline to keep styling clean */
+  }
+  
+  .btn-help .fas {
+    margin-right: 5px; /* Spacing between icon and text */
+  }
+  
+  
+  

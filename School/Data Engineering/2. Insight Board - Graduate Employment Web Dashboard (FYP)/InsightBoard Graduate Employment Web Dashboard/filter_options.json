@@ -1,0 +1,38 @@
+{
+  "degree_categories": [
+    "Arts & Humanities",
+    "Business & Economics",
+    "Chemistry",
+    "Computing",
+    "Education",
+    "Engineering",
+    "Environmental Studies",
+    "Food Science and Technology",
+    "Health Sciences",
+    "Interdisciplinary Studies",
+    "Law",
+    "Maritime Studies",
+    "Physics",
+    "Science",
+    "Social Sciences"
+  ],
+  "universities": [
+    "Nanyang Technological University",
+    "National University of Singapore",
+    "Singapore Institute of Technology",
+    "Singapore Management University",
+    "Singapore University of Social Sciences",
+    "Singapore University of Technology and Design"
+  ],
+  "years": [
+    "2013",
+    "2014",
+    "2015",
+    "2016",
+    "2017",
+    "2018",
+    "2019",
+    "2020",
+    "2021"
+  ]
+}

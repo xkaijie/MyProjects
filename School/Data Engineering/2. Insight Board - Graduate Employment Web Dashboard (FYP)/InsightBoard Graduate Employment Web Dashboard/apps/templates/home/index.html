@@ -1,0 +1,1140 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block stylesheets %}
+<!-- Additional CSS can go here -->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/index.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/modal.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Header with Filters -->
+<div class="header bg-primary pb-6">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-7">
+          <h6 class="h2 text-white d-inline-block mb-0"> Default</h6>
+          <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+              <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+              <li class="breadcrumb-item active" aria-current="page"><a href="index.html">Dashboard</a></li>
+            </ol>
+          </nav>
+        </div>
+
+        <div class="col-lg-6 col-5 text-right">
+          <div class="filter-container" style="display: flex; justify-content: space-around; align-items: center;">
+            <div class="filter-group">
+              <label for="year-filter" class="filter-label">Year</label>
+              <select name="year" id="year-filter" class="filter-select btn btn-sm btn-neutral"></select>
+            </div>
+            <div class="filter-group">
+              <label for="university-filter" class="filter-label">University</label>
+              <select name="university" id="university-filter" class="filter-select btn btn-sm btn-neutral"></select>
+            </div>
+            <div class="filter-group">
+              <label for="degree-filter" class="filter-label">Degree</label>
+              <select name="degree" id="degree-filter" class="filter-select btn btn-sm btn-neutral"></select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dashboard Content -->
+<div class="container-fluid mt--6">
+  <div class="row">
+    <!-- Key Metrics -->
+    <div class="col-xl-12">
+      <div class="row">
+        <div class="col-lg-3 col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="text-uppercase text-muted mb-0" >Total Graduates</h6>
+              <span class="h2 font-weight-bold mb-0" id="graduate_count">{{ graduate_count }}</span>
+              <div id="graduate_count_diff" class="metric-diff"></div>
+              <!-- Placeholder for dynamic content -->
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="text-uppercase text-muted mb-0" title="Average Employment Rate Overall">Avg. Employ Rate Overall</h6>
+              <span class="h2 font-weight-bold mb-0" id="average_employment_rate">{{ average_employment_rate|default('N/A') }}%</span>
+              <div id="average_employment_rate_diff" class="metric-diff"></div>
+              <!-- Placeholder for dynamic content -->
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="text-uppercase text-muted mb-0" title="Average Employment Rate FT">Avg. Employ Rate for FT</h6>
+              <span class="h2 font-weight-bold mb-0" id="ft_perm_employment_rate">{{ ft_perm_employment_rate|default('N/A') }}%</span>
+              <div id="ft_perm_employment_rate_diff" class="metric-diff"></div>
+              <!-- Placeholder for dynamic content -->
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="text-uppercase text-muted mb-0" title="Gross Monthly Median Salary">Monthly Median Salary</h6>
+              <span class="h2 font-weight-bold mb-0" id="median_gross_monthly_salary">{{ median_gross_monthly_salary|default('N/A') }}</span>
+              <div id="median_gross_monthly_salary_diff" class="metric-diff"></div>
+              <!-- Placeholder for dynamic content -->
+            </div>
+          </div>
+        </div>
+        <!-- Additional metrics can be added here -->
+      </div>
+    </div>
+  </div>
+
+ <!-- Dashboard Layout for Charts -->
+<div class="container-fluid">
+  
+  <!-- 1. Line Chart -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <!-- Employment Rate Over Time Line Chart -->
+          <div id="charts" style="height: 300px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 2.  -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <!-- <div id="employmentRateByDegreeChart" style="height: 300px;"></div>-->
+          <div id="averageSalaryChart" style="height: 300px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Row for Histogram and Pie Chart -->
+  <div class="row">
+    <!-- 3. Histogram  for Starting Salary Distribution -->
+    <div class="col-lg-6 col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div id="startingSalaryChart" style="height: 300px;"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 4. employment Rate By Degree bar Chart-->
+    <div class="col-lg-6 col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div id="employmentRateByDegreeChart" style="height: 300px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Additional sections with "Test" text for insights or data -->
+  <!-- <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          Test section for additional insights or data
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<div class="centered-container">
+  <h3 class="future text title"></h3>
+  <button onclick="exportDashboard()" class="btnExport">Export Raw Data</button>
+</div>
+
+<!--====================== Help================================-->
+<!-- Help Modal Button -->
+<button id="helpBtn" class="btn-help"> More Info</button>
+
+<!-- The Modal -->
+<div id="helpModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>How to Read This Dashboard</h2>
+    <p>Welcome to the Graduate Employment Dashboard. This interactive tool allows you to filter and view employment data based on specific criteria. Here’s how you can make the most of the dashboard features:</p>
+    
+    <h3>Filters</h3>
+    <p>Apply filters to refine the data displayed:</p>
+    <ol>
+        <li>
+            <strong>Selecting a Year:</strong> Choose a year from the '--Select Year--' dropdown menu to update the dashboard with data for that year.
+        </li>
+        <li>
+            <strong>Choosing a University:</strong> Use the '--Select University--' dropdown to filter data by university.
+        </li>
+        <li>
+            <strong>Picking a Degree:</strong> Select a specific degree from the '--Select Degree--' dropdown to view data relevant to that program.
+        </li>
+        <li>
+          <strong>Resetting Filters:</strong> If you wish to start over or adjust your current filters, simply choose new options from the dropdown menus or reset each dropdown to its default '--Select--' option to clear all selections and refresh the data.
+      </li>
+    </ol>
+
+    <h3>Key Metrics</h3>
+    <p>Understand the significance of key metrics displayed on the dashboard:</p>
+    <ol>
+        <li>
+            <strong>Year-on-Year Comparisons:</strong> Look for the percentage changes next to key metrics like 'Average Employment Rate Overall' and 'Gross Monthly Median Salary'. Green arrows indicate an increase, red arrows denote a decrease, showing trends compared to the previous year.
+        </li>
+    </ol>
+
+    <h3>Charts</h3>
+    <p>Interact with various charts to gain deeper insights:</p>
+    <ol>
+        <li>
+            <strong>Interpreting the Charts:</strong> View interactive charts that provide insights into graduate employment rates and salary ranges. Hover over any data point or element to see detailed information.
+        </li>
+    </ol>
+
+    <h3>Export Data</h3>
+    <p>Download the data for offline analysis:</p>
+    <ol>
+        <li>
+            <strong>Export Raw Data:</strong> Use the 'Export Raw Data' button to download data for further analysis. This allows you to manipulate the data independently from the dashboard.
+        </li>
+    </ol>
+
+    <p>If you have questions or need additional assistance, please don’t hesitate to <a href="/feedback">contact our support team</a>.</p>
+    
+    <p><em>Tip:</em> For more detailed information, hover over chart elements. This will display a tooltip with more specific data points, enhancing your data interaction experience.</p>
+  </div>
+</div>
+{% include "includes/footer.html" %}
+
+{% endblock %}
+
+{% block javascripts %}
+<script id="chartData" type="application/json">{{ chart_data | tojson | safe }}</script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fetch filter options from server
+    fetch('/filter-options').then(response => {
+        return response.json();
+    }).then(data => {
+        // Sort years in descending order
+        let sortedYears = data.years.sort((a, b) => b - a);
+
+        // Populate year dropdown with the sorted years
+        let yearSelect = document.getElementById('year-filter');
+        yearSelect.options.add(new Option("-- Select Year --", "")); // Default option
+
+        sortedYears.forEach(year => {
+            let option = new Option(year, year);
+            yearSelect.add(option);
+        });
+
+        // Sort and Populate university dropdown with a default option
+        let universitySelect = document.getElementById('university-filter');
+        universitySelect.options.add(new Option("-- Select University --", ""));
+        let sortedUniversities = data.universities.sort(); 
+        sortedUniversities.forEach(university => {
+            let option = new Option(university, university);
+            universitySelect.add(option);
+        });
+        // ======================= Degree ====================================
+         // Populate the degree category dropdown
+    let degreeCategorySelect = document.getElementById('degree-filter');
+    degreeCategorySelect.options.add(new Option("-- Select Degree --", ""));
+
+    data.degree_categories.forEach(degreeCategory => {
+        let option = new Option(degreeCategory, degreeCategory);
+        degreeCategorySelect.add(option);
+    });
+}).catch(error => {
+    console.error('Error fetching filter options:', error);
+});
+    // ============================== Key Metrics Real Time Filtering ===============================================
+     var yearFilter = document.getElementById('year-filter');
+    var universityFilter = document.getElementById('university-filter');
+    var degreeFilter = document.getElementById('degree-filter');
+
+    function updateMetrics() {
+        var year = yearFilter.value;
+        var university = universityFilter.value;
+        var degreeCategory = degreeFilter.value;
+
+        fetch(`/update-metrics?year=${year}&university=${university}&degree=${encodeURIComponent(degreeCategory)}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('graduate_count').textContent = data.graduate_count;
+            document.getElementById('graduate_count_diff').innerHTML = formatIndicator(data.graduate_count_diff);
+
+            // Format average employment rates to two decimal places and handle null or undefined
+            var avgEmploymentRate = data.average_employment_rate ? parseFloat(data.average_employment_rate).toFixed(2) : 'N/A';
+            var ftPermEmploymentRate = data.ft_perm_employment_rate ? parseFloat(data.ft_perm_employment_rate).toFixed(2) : 'N/A';
+
+            document.getElementById('average_employment_rate').textContent = avgEmploymentRate + '%';
+            document.getElementById('average_employment_rate_diff').innerHTML = formatIndicator(data.average_employment_rate_diff);
+            document.getElementById('ft_perm_employment_rate').textContent = ftPermEmploymentRate + '%';
+            document.getElementById('ft_perm_employment_rate_diff').innerHTML = formatIndicator(data.ft_perm_employment_rate_diff);
+            document.getElementById('median_gross_monthly_salary').textContent = data.median_gross_monthly_salary;
+            document.getElementById('median_gross_monthly_salary_diff').innerHTML = formatIndicator(data.median_gross_monthly_salary_diff);
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // Attach the updateMetrics function to the change event of your filters
+    yearFilter.onchange = updateMetrics;
+    universityFilter.onchange = updateMetrics;
+    degreeFilter.onchange = updateMetrics;
+
+    // Initial call to populate data
+    updateMetrics();
+});
+
+function formatIndicator(diff) {
+    let content;
+    if (!diff || diff === "N/A") {
+        content = "<span class='metric-diff no-change'>N/A</span>";
+    } else {
+        const value = parseFloat(diff);
+        const symbol = value === 0 ? '' : value > 0 ? '↑' : '↓';
+        const className = value === 0 ? 'no-change' : value > 0 ? 'increase' : 'decrease';
+        content = `<span class="metric-diff ${className}">${symbol}${Math.abs(value)}%</span>`;
+    }
+    return content;
+}
+    // ================================ Plotly Chart ===========================================
+    // 1. Average Employment Rate over time
+  var chartDataElement = document.getElementById('chartData');
+  if (chartDataElement) {
+    var plotData = JSON.parse(chartDataElement.textContent);
+
+    plotData.forEach(function(trace) {
+    // Set the line width for each trace
+      trace.mode = 'lines+markers';
+      trace.line = { width: 4 };
+      trace.marker = { size: 8 };
+      trace.hovertemplate = 'Year: %{x}<br>Employment Rate: %{y:.2f}%<extra></extra>';
+    });
+
+    var employmentRateLayout = {
+      title: {
+        text: 'Average Employment Rate (%) Over Time',
+        font: {
+          size: 18,
+          family: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+          weight: 'bold'
+        },
+        x: 0.5, // Center align title
+        xanchor: 'center',
+      },
+      autosize: true,
+      xaxis: {
+        showgrid: false,
+        tickfont: {
+          size: 14, // Slightly reduce font size to prevent overlap
+            family: 'Arial, sans-serif', // Use a more standard font for better compatibility
+        },
+        showspikes: true,
+        spikecolor: '#999', // Optional: style the spike line
+        spikethickness: 3,
+        spikesnap: 'cursor',
+      },
+      yaxis: {
+        showgrid: false,
+        tickfont: {
+          size: 14, // Slightly reduce font size to prevent overlap
+            family: 'Arial, sans-serif', // Use a more standard font for better compatibility
+        },
+        ticksuffix: '%',  // Add this to display percentage
+        showspikes: true,
+        spikecolor: '#999', // Optional: style the spike line
+        spikethickness: 3,
+        spikesnap: 'cursor',
+    },
+      margin: {
+        b: 40,
+        t: 40,
+        l: 50,
+        r: 10,
+      },
+      plot_bgcolor: 'rgba(0,0,0,0)', // Transparent background
+      paper_bgcolor: 'rgba(0,0,0,0)', // Transparent background for the plot area
+      hovermode: 'closest', // set ploty hover on closest data by default
+      responsive: true, // Chart will respond to window resize events
+      
+};
+      
+     
+
+    Plotly.newPlot('charts', plotData, employmentRateLayout);
+    }
+    //==================================================================================================
+    function updateEmploymentRateChart() {
+    const year = document.getElementById('year-filter').value;
+    const university = document.getElementById('university-filter').value;
+    const degree = document.getElementById('degree-filter').value;
+
+    const queryParams = new URLSearchParams({
+        year: year,
+        university: university,
+        degree: degree
+    }).toString();
+
+    fetch(`/employment-rate-chart-data?${queryParams}`)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(function(trace) {
+                trace.line = { width: 4 }; // Adjust the line thickness here
+                trace.mode = 'lines+markers'; // To display both line and markers
+                trace.marker = {
+                  size: 10 // Increase marker size
+                  };
+                trace.hovertemplate = 'Year: %{x}<br>Employment Rate: %{y:.2f}%<extra></extra>';
+            });
+
+            var employmentRateLayout = {
+                title: {
+                    text: 'Average Employment Rate (%) Over Time',
+                    font: {
+                        size: 18,
+                        family: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                        weight: 'bold'
+                    },
+                    x: 0.5, // Center align title
+                    xanchor: 'center',
+                },
+                autosize: true,
+                xaxis: {
+                    showgrid: false,
+                    tickvals: data[0].x, // Assuming data[0].x contains the years as integers
+                    ticktext: data[0].x.map(String),
+                    tickfont: {
+                        size: 14,
+                        family: 'Arial, sans-serif',
+                    },
+                    showspikes: true,
+                    spikecolor: '#999',
+                    spikethickness: 3,
+                    spikesnap: 'cursor',
+                },
+                yaxis: {
+                    showgrid: false,
+                    tickfont: {
+                        size: 14,
+                        family: 'Arial, sans-serif',
+                    },
+                    ticksuffix: '%',
+                    showspikes: true,
+                    spikecolor: '#999',
+                    spikethickness: 3,
+                    spikesnap: 'cursor',
+                },
+                margin: {
+                    b: 40,
+                    t: 40,
+                    l: 50,
+                    r: 10,
+                },
+                plot_bgcolor: 'rgba(0,0,0,0)', // Transparent background
+                paper_bgcolor: 'rgba(0,0,0,0)', // Transparent background for the plot area
+                hovermode: 'closest',
+                responsive: true
+            };
+
+            // Using Plotly.react to efficiently update the chart
+            Plotly.react('charts', data, employmentRateLayout);
+        })
+        .catch(error => console.error('Error updating employment rate chart:', error));
+}
+
+// Attach the function to filter change events
+document.getElementById('year-filter').addEventListener('change', updateEmploymentRateChart);
+document.getElementById('university-filter').addEventListener('change', updateEmploymentRateChart);
+document.getElementById('degree-filter').addEventListener('change', updateEmploymentRateChart);
+
+    // =================================================================================================
+    // 2. Gross Monthly Mean Salary By University Chart
+    fetch('/average-salary-by-university').then(response => response.json()).then(data => {
+    // Define the university abbreviation mapping
+    const universityAbbreviations = {
+        'Singapore Management University': 'SMU',
+        'Singapore University of Technology and Design': 'SUTD',
+        'National University of Singapore': 'NUS',
+        'Nanyang Technological University': 'NTU',
+        'Singapore Institute of Technology': 'SIT',
+        'Singapore University of Social Sciences': 'SUSS'
+    };
+
+    // Sort the data by average salaries in descending order
+    let sortedData = data.universities.map((uni, index) => {
+        return { 'university': uni, 'average_salary': data.average_salaries[index] };
+    }).sort((a, b) => b.average_salary - a.average_salary);
+
+    // Abbreviate university names in the sorted data
+    sortedData.forEach(data => {
+        data.university = universityAbbreviations[data.university] || data.university;
+    });
+
+    // Separate the sorted and abbreviated data into two arrays for plotting
+    let sortedUniversities = sortedData.map(data => data.university);
+    let sortedSalaries = sortedData.map(data => data.average_salary);
+
+    // Format the salary values to a fixed number of decimals for display
+    let formattedSalaries = sortedSalaries.map(salary => `$${salary.toFixed(2)}`);
+
+        var trace = {
+            x: sortedUniversities,
+            y: sortedSalaries,
+            type: 'bar',
+            text: formattedSalaries,
+            textposition: 'auto',
+            marker: {
+                color: '#5e72e4', // Use the specified color
+                line: {
+                color: 'darkgrey',
+                width: 2,
+                }
+            },
+            hovertemplate:'University: %{x}<br>Average Salary: $%{y:.2f}<extra></extra>'
+        };
+
+        var salaryLayout = {
+      title: {
+        text: 'Gross Monthly Mean Salary By University',
+        font: {
+          size: 18,
+          family: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+          weight: 'bold'
+        },
+        x: 0.5, // Center align title
+        xanchor: 'center',
+      },
+      autosize: true,
+      xaxis: {
+        tickangle: 0,
+        automargin: true,
+        showgrid: false,
+        zeroline: true,
+        tickfont: {
+          size: 14, // Slightly reduce font size to prevent overlap
+            family: 'Arial, sans-serif', // Use a more standard font for better compatibility
+        },
+        tickvals: sortedUniversities,
+        showspikes: true,
+        spikecolor: '#999', // Optional: style the spike line
+        spikethickness: 3,
+        spikesnap: 'cursor',
+      },
+      yaxis: {
+        showgrid: false,
+        zeroline: false,
+        tickfont: {
+          size: 14, // Slightly reduce font size to prevent overlap
+            family: 'Arial, sans-serif', // Use a more standard font for better compatibility
+        },
+        tickformat: '$,',  // Add this to display dollar sign and format as currency
+        showspikes: true,
+        spikecolor: '#999', // Optional: style the spike line
+        spikethickness: 3,
+        spikesnap: 'cursor',
+    },
+           margin: {
+        b: 40,
+        t: 40,
+        l: 50,
+        r: 10,
+      },
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      hovermode: 'closest',
+      bargap: 0.1,
+    };
+
+    Plotly.newPlot('averageSalaryChart', [trace], salaryLayout);
+  }).catch(error => console.error('Error loading average salary data:', error));
+
+  // ======================Chart Real Time Filtering========================
+  // 2. Function to update the Average Gross Monthly Salary by University chart
+// Function to update the Average Gross Monthly Salary by University chart
+function updateAverageSalaryChart() {
+    const year = document.getElementById('year-filter').value;
+    const university = document.getElementById('university-filter').value;
+    const degree = document.getElementById('degree-filter').value;
+
+    const queryParams = new URLSearchParams({
+        year: year,
+        university: university,
+        degree: degree
+    }).toString();
+
+    fetch(`/average-salary-by-university?${queryParams}`)
+        .then(response => response.json())
+        .then(data => {
+            const universityAbbreviations = {
+                'Singapore Management University': 'SMU',
+                'Singapore University of Technology and Design': 'SUTD',
+                'National University of Singapore': 'NUS',
+                'Nanyang Technological University': 'NTU',
+                'Singapore Institute of Technology': 'SIT',
+                'Singapore University of Social Sciences': 'SUSS'
+            };
+
+            let sortedData = data.universities.map((uni, index) => ({
+                university: universityAbbreviations[uni] || uni,
+                average_salary: data.average_salaries[index]
+            })).sort((a, b) => b.average_salary - a.average_salary);
+
+            let trace = {
+                x: sortedData.map(data => data.university),
+                y: sortedData.map(data => data.average_salary),
+                type: 'bar',
+                text: sortedData.map(data => `$${data.average_salary.toFixed(2)}`),
+                textposition: 'auto',
+                marker: {
+                    color: '#5e72e4',
+                    line: {
+                        color: 'darkgrey',
+                        width: 2
+                    }
+                },
+                hovertemplate: 'University: %{x}<br>Average Salary: $%{y:.2f}<extra></extra>'
+            };
+
+            var salaryLayout = {
+                title: {
+                    text: 'Gross Monthly Mean Salary By University',
+                    font: {
+                        size: 18,
+                        family: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                        weight: 'bold'
+                    },
+                    x: 0.5, // Center align title
+                    xanchor: 'center',
+                },
+                autosize: true,
+                xaxis: {
+                    tickangle: 0,
+                    automargin: true,
+                    showgrid: false,
+                    zeroline: true,
+                    tickfont: {
+                        size: 14,
+                        family: 'Arial, sans-serif',
+                    },
+                    showspikes: true,
+                    spikecolor: '#999',
+                    spikethickness: 3,
+                    spikesnap: 'cursor',
+                },
+                yaxis: {
+                    showgrid: false,
+                    zeroline: false,
+                    tickfont: {
+                        size: 14,
+                        family: 'Arial, sans-serif',
+                    },
+                    tickformat: '$,',
+                    showspikes: true,
+                    spikecolor: '#999',
+                    spikethickness: 3,
+                    spikesnap: 'cursor',
+                },
+                margin: {
+                    b: 40,
+                    t: 40,
+                    l: 50,
+                    r: 10,
+                },
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                hovermode: 'closest',
+                showlegend: false,
+                bapgap:0.1
+            };
+
+            // Update the chart using Plotly.react to re-render the chart with new data
+            Plotly.react('averageSalaryChart', [trace], salaryLayout);
+        })
+        .catch(error => console.error('Error updating average salary chart:', error));
+}
+
+// Attach the update function to the change events of your filters
+document.getElementById('year-filter').addEventListener('change', updateAverageSalaryChart);
+document.getElementById('university-filter').addEventListener('change', updateAverageSalaryChart);
+document.getElementById('degree-filter').addEventListener('change', updateAverageSalaryChart);
+
+  // ========================================= Chart =================================
+  // 3. Starting Salary Distribution Histogram
+fetch('/basic-salary-data').then(response => response.json()).then(data => {
+    var trace = {
+        x: data,
+        type: 'histogram',
+        marker: {
+            color: '#2dce89',  // Setting the specified color for histogram bars
+            //color: '#81C784', // A more pleasant shade of green
+            line: {
+            color: 'darkgrey', // A darker shade for the border
+            width: 2   // Border width
+           }
+        },
+        xbins: {
+        // This will set the width of each bin
+        size: 450// Adjust the size as needed for your data
+    },
+    hovertemplate: 
+        'Salary Range: %{x}<br>' +
+        'Count: %{y}<extra></extra>', // Custom text for hovertemplate
+    };
+    var layout = {
+        title: {
+            //text: 'Distribution of Basic Monthly Mean Salaries',
+            text: 'Starting Salary Distribution',
+            font: {
+                size: 18,
+                family: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                weight: 'bold',
+            },
+            x: 0.5, // Center align title
+            xanchor: 'center',
+        },
+        autosize: true,
+        xaxis: {
+            title: {
+                //text: 'Salary',
+                font: {
+                    size: 16,
+                    family: 'Arial, sans-serif', 
+                }
+            },
+            showgrid: false,
+            tickfont: {
+              size: 14, // Slightly reduce font size to prevent overlap
+            family: 'Arial, sans-serif', // Use a more standard font for better compatibility
+            },
+            zeroline: false,
+            showspikes: true,
+            spikecolor: '#999', // Optional: style the spike line
+            spikethickness: 3,
+            spikesnap: 'cursor',
+            tickprefix: '$', 
+        },
+        yaxis: {
+            title: {
+               // text: 'Frequency',
+                font: {
+                    size: 16,
+                    family: 'Arial, sans-serif', 
+                }
+            },
+            showgrid: false,
+            tickfont: {
+              size: 14, // Slightly reduce font size to prevent overlap
+            family: 'Arial, sans-serif', // Use a more standard font for better compatibility
+            },
+            zeroline: false,
+            showspikes: true,
+            spikecolor: '#999', // Optional: style the spike line
+            spikethickness: 3,
+            spikesnap: 'cursor',
+        },
+        margin: {
+          b: 40,
+          t: 40,
+          l: 50,
+          r: 10,
+        },
+        plot_bgcolor: 'rgba(0,0,0,0)', // Transparent background
+        paper_bgcolor: 'rgba(0,0,0,0)', // Transparent background for the plot area
+        hovermode: 'closest',
+        responsive: true
+    };
+    Plotly.newPlot('startingSalaryChart', [trace], layout);
+}).catch(error => console.error('Error loading salary data:', error));
+
+// Function to update the Starting Salary Distribution Histogram
+function updateStartingSalaryChart() {
+    const year = document.getElementById('year-filter').value;
+    const university = document.getElementById('university-filter').value;
+    const degree = document.getElementById('degree-filter').value;
+
+    const queryParams = new URLSearchParams({
+        year: year,
+        university: university,
+        degree: degree
+    }).toString();
+
+    fetch(`/basic-salary-data?${queryParams}`)
+        .then(response => response.json())
+        .then(data => {
+            var trace = {
+                x: data,
+                type: 'histogram',
+                marker: {
+                    color: '#2dce89', // The specified color for histogram bars
+                    line: {
+                        color: 'darkgrey', // Color for the border
+                        width: 2 // Width for the border
+                    }
+                },
+                xbins: {
+                    size: 450 // The bin size
+                },
+                hovertemplate: 'Salary Range: %{x}<br>Count: %{y}<extra></extra>'
+            };
+
+            var layout = {
+                title: {
+                    text: 'Starting Salary Distribution',
+                    font: {
+                        size: 18,
+                        family: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                        weight: 'bold'
+                    },
+                    x: 0.5, // Center align title
+                    xanchor: 'center',
+                },
+                autosize: true,
+                xaxis: {
+                    title: {
+                        //text: 'Salary',
+                        font: {
+                            size: 16,
+                            family: 'Arial, sans-serif',
+                        }
+                    },
+                    showgrid: false,
+                    tickfont: {
+                        size: 14,
+                        family: 'Arial, sans-serif',
+                    },
+                    zeroline: false,
+                    showspikes: true,
+                    spikecolor: '#999',
+                    spikethickness: 3,
+                    spikesnap: 'cursor',
+                    tickprefix: '$',
+                },
+                yaxis: {
+                    title: {
+                        //text: 'Frequency',
+                        font: {
+                            size: 16,
+                            family: 'Arial, sans-serif',
+                        }
+                    },
+                    showgrid: false,
+                    tickfont: {
+                        size: 14,
+                        family: 'Arial, sans-serif',
+                    },
+                    zeroline: false,
+                    showspikes: true,
+                    spikecolor: '#999',
+                    spikethickness: 3,
+                    spikesnap: 'cursor',
+                },
+                margin: {
+                    b: 40,
+                    t: 40,
+                    l: 50,
+                    r: 10,
+                },
+                plot_bgcolor: 'rgba(0,0,0,0)', // Transparent background
+                paper_bgcolor: 'rgba(0,0,0,0)', // Transparent background for the plot area
+                hovermode: 'closest',
+                responsive: true,
+                showlegend: false // Hide the legend
+            };
+
+            // Update the chart using Plotly.react
+            Plotly.react('startingSalaryChart', [trace], layout);
+        })
+        .catch(error => {
+            console.error('Error updating starting salary distribution chart:', error);
+        });
+}
+
+// Initial call to populate the chart
+updateStartingSalaryChart();
+
+// Event listeners for filter dropdowns
+document.getElementById('year-filter').addEventListener('change', updateStartingSalaryChart);
+document.getElementById('university-filter').addEventListener('change', updateStartingSalaryChart);
+document.getElementById('degree-filter').addEventListener('change', updateStartingSalaryChart);
+
+// ============================== Chart===================================================
+// 4. Employment Rates by Degree 
+fetch('/employment-rate-by-degree-data').then(response => response.json()).then(data => {
+    // Sort the data by average rates in descending order
+    let sortedData = data.degrees.map((degree, index) => ({
+        degree: degree,
+        rate: data.average_rates[index]
+    })).sort((a, b) => b.rate - a.rate);
+
+    const trace = {
+        x: sortedData.map(data => data.degree),
+        y: sortedData.map(data => data.rate),
+        type: 'bar',
+        marker: {
+            color: '#f5365c',
+            line: {
+            color: 'darkgrey',
+            width: 1.5
+        }
+        },
+        text: sortedData.map(data => `${data.rate.toFixed(2)}%`),
+        textposition: 'inside',
+        hovertemplate: '%{x}: %{y:.2f}%<extra></extra>' // Customize hovertemplate here
+    };
+
+    const layout = {
+        title: {
+            text: 'Average Employment Rate (%) by Degree',
+            font: {
+                size: 18,
+                family: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                weight: 'bold'
+            },
+            x: 0.5, // Center align title
+            xanchor: 'center',
+        },
+        autosize: true,
+        xaxis: {
+            title: {
+                //text: 'Degree',
+                font: {
+                    size: 16,
+                    family: 'Arial, sans-serif',
+                }
+                
+            },
+            tickangle: -45,
+            tickfont: {
+              size: 13, // Slightly reduce font size to prevent overlap
+            family: 'Arial, sans-serif', // Use a more standard font for better compatibility
+             },
+            automargin: true,
+            showgrid: false,
+            zeroline: false,
+            showspikes: true,
+            spikecolor: '#999', // Optional: style the spike line
+            spikethickness: 3,
+            spikesnap: 'cursor',
+        },
+        yaxis: {
+            title: {
+                //text: 'Average Employment Rate (%)',
+                font: {
+                    size: 16,
+                    family: 'Arial, sans-serif',
+                }
+            },
+            showgrid: false,
+            tickfont: {
+              size: 14, // Slightly reduce font size to prevent overlap
+            family: 'Arial, sans-serif', // Use a more standard font for better compatibility
+             },
+            zeroline: false,
+            ticksuffix: '%',
+            showspikes: true,
+            spikecolor: '#999', // Optional: style the spike line
+            spikethickness: 3,
+            spikesnap: 'cursor',
+        },
+        margin: {
+              b: 100,
+              t: 40,
+              l: 50,
+              r: 10,
+        },
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        bargap: 0.1,
+        hovermode: 'closest',
+        responsive: true
+    };
+
+    Plotly.newPlot('employmentRateByDegreeChart', [trace], layout);
+}).catch(error => console.error('Error loading employment rate data:', error));
+// =================== Update Average Employment Rate Chart==================================================
+// Function to update the Employment Rate by Degree chart
+function updateEmploymentRateByDegreeChart() {
+    const year = document.getElementById('year-filter').value;
+    const university = document.getElementById('university-filter').value;
+    const degree = document.getElementById('degree-filter').value;
+
+    const queryParams = new URLSearchParams({
+        year: year,
+        university: university,
+        degree: degree
+    }).toString();
+
+    fetch(`/employment-rate-by-degree-data?${queryParams}`)
+        .then(response => response.json())
+        .then(data => {
+            // Sort the data by average rates in descending order
+            let sortedData = data.degrees.map((degree, index) => ({
+                degree: degree,
+                rate: data.average_rates[index]
+            })).sort((a, b) => b.rate - a.rate);
+
+            const trace = {
+                x: sortedData.map(data => data.degree),
+                y: sortedData.map(data => data.rate),
+                type: 'bar',
+                marker: {
+                    color: '#f5365c',
+                    line: {
+                        color: 'darkgrey',
+                        width: 1.5
+                    }
+                },
+                text: sortedData.map(data => `${data.rate.toFixed(2)}%`),
+                textposition: 'inside',
+                hovertemplate: '%{x}: %{y:.2f}%<extra></extra>' // Customize hovertemplate here
+            };
+
+            const layout = {
+                title: {
+                    text: 'Average Employment Rate (%) by Degree',
+                    font: {
+                        size: 18,
+                        family: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                        weight: 'bold'
+                    },
+                    x: 0.5, // Center align title
+                    xanchor: 'center',
+                },
+                autosize: true,
+                xaxis: {
+                    title: {
+                        //text: 'Degree',
+                        font: {
+                            size: 16,
+                            family: 'Arial, sans-serif',
+                        }
+                    },
+                    tickangle: -45,
+                    tickfont: {
+                        size: 13,
+                        family: 'Arial, sans-serif',
+                    },
+                    automargin: true,
+                    showgrid: false,
+                    zeroline: false,
+                    showspikes: true,
+                    spikecolor: '#999',
+                    spikethickness: 3,
+                    spikesnap: 'cursor',
+                },
+                yaxis: {
+                    title: {
+                        //text: 'Average Employment Rate (%)',
+                        font: {
+                            size: 16,
+                            family: 'Arial, sans-serif',
+                        }
+                    },
+                    showgrid: false,
+                    tickfont: {
+                        size: 14,
+                        family: 'Arial, sans-serif',
+                    },
+                    zeroline: false,
+                    ticksuffix: '%',
+                    showspikes: true,
+                    spikecolor: '#999',
+                    spikethickness: 3,
+                    spikesnap: 'cursor',
+                },
+                margin: {
+                    b: 100,
+                    t: 40,
+                    l: 50,
+                    r: 10,
+                },
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                bargap: 0.1,
+                hovermode: 'closest',
+                responsive: true,
+                showlegend: false // Hide the legend
+            };
+
+            // Update the chart using Plotly.react
+            Plotly.react('employmentRateByDegreeChart', [trace], layout);
+        })
+        .catch(error => {
+            console.error('Error updating employment rate by degree chart:', error);
+        });
+}
+
+// Initial call to populate the chart
+updateEmploymentRateByDegreeChart();
+
+// Event listeners for filter dropdowns
+document.getElementById('year-filter').addEventListener('change', updateEmploymentRateByDegreeChart);
+document.getElementById('university-filter').addEventListener('change', updateEmploymentRateByDegreeChart);
+document.getElementById('degree-filter').addEventListener('change', updateEmploymentRateByDegreeChart);
+
+// =========================================================================================
+// Export
+function exportDashboard() {
+    // Retrieve values from filter dropdowns or inputs
+    const year = document.getElementById('year-filter').value;
+    const university = document.getElementById('university-filter').value;
+    const degree = document.getElementById('degree-filter').value;
+
+    // Construct the query parameters
+    const queryParams = new URLSearchParams({
+        year: year,
+        university: university,
+        degree: degree
+    }).toString();
+
+    // Build the URL for the export endpoint
+    const url = `/export/dashboard?${queryParams}`;
+
+    // Navigate to the URL to initiate the download
+    window.location.href = url;
+}
+
+// ================== HELP Modal Section=====================================================
+// Get the modal
+var modal = document.getElementById("helpModal");
+// Get the button that opens the modal
+var btn = document.getElementById("helpBtn");
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+// When the user clicks on the button, open the modal
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+//==========================================================================================
+// When the user clicks on the button, open the modal
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+</script>
+{% endblock %}

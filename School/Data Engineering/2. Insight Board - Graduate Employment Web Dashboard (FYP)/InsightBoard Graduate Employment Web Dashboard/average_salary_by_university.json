@@ -1,0 +1,18 @@
+{
+  "average_salaries": [
+    4240.0, 
+    4039.035714285714, 
+    3551.4873949579833, 
+    3321.3636363636365, 
+    3440.112449799197, 
+    3778.3221288515406
+  ], 
+  "universities": [
+    "Singapore Management University", 
+    "Singapore University of Technology and Design", 
+    "Nanyang Technological University", 
+    "Singapore University of Social Sciences", 
+    "Singapore Institute of Technology", 
+    "National University of Singapore"
+  ]
+}

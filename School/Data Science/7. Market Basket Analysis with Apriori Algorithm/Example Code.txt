@@ -1,0 +1,28 @@
+import pandas as pd
+from mlxtend.frequent_patterns import apriori, association_rules
+import numpy as np
+
+# Load Online Retail Data
+online_retail_data = pd.read_csv('online_retail_data.csv')
+online_retail_data['TotalAmount'] = online_retail_data['Quantity'] * online_retail_data['UnitPrice']
+online_retail_data = online_retail_data[online_retail_data['Quantity'] > 0]
+online_retail_data = online_retail_data[online_retail_data['UnitPrice'] > 0]
+online_retail_data = online_retail_data.drop_duplicates()
+
+# Example code for creating transaction matrix and applying Apriori
+# Note: Implement appropriate encoding and transformation for transaction data
+# ...
+
+# Load Titanic Data
+titanic_data = pd.read_csv('titanic_data.csv')
+titanic_data['age'].fillna(0, inplace=True)
+# Apply binning and transformation
+# ...
+
+# Example code for applying Apriori to Titanic Data
+# Note: Implement appropriate encoding and transformation for Titanic data
+# ...
+
+# Display Results
+print("Online Retail Rules:\n", online_retail_rules)
+print("Titanic Rules:\n", titanic_rules)

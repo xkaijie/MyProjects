@@ -1,0 +1,103 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Feedback{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/feedback.css') }}" type="text/css">
+<style>
+  textarea#input-feedback {
+    min-height: 150px; /* Increase the minimum height */
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<!-- Header with Filters -->
+<div class="header bg-primary pb-6">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-7">
+          <h6 class="h2 text-white d-inline-block mb-0">Feedback</h6>
+          <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+              <li class="breadcrumb-item"><a href="{{ url_for('home_blueprint.index') }}"><i class="fas fa-home"></i></a></li>
+              <li class="breadcrumb-item"><a href="{{ url_for('home_blueprint.index') }}">Dashboard</a></li>
+              <li class="breadcrumb-item active">Feedback</li>
+            </ol>
+          </nav>
+        </div>
+        <!-- Optionally add more columns for other filters -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main container for Feedback Form -->
+<div class="container-fluid mt--7 custom-feedback-margin" id="content">
+  <div class="row">
+    <div class="col-12 order-xl-1">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <h3 class="col-12 mb-0">Submit Feedback</h3>
+          </div>
+        </div>
+        <form id="feedbackForm" method="post" action="{{ url_for('home_blueprint.submit_feedback') }}">
+          {{ form.hidden_tag() }}
+          <h6 class="heading-small text-muted mb-4">Feedback information</h6>
+          <div class="pl-lg-4">
+              <div class="form-group">
+                   {{ form.name.label(class_='form-control-label', for='input-name') }}
+                   {{ form.name(id='input-name', class_='form-control form-control-alternative', placeholder='Your Name', required=True) }}
+                </div>
+              <div class="form-group">
+                  {{ form.email.label(class_='form-control-label', for='input-email') }}
+                  {% if form.email.errors %}
+                  {{ form.email(id='input-email', class_='form-control form-control-alternative is-invalid', placeholder='example@example.com', required=True) }}
+              <div class="invalid-feedback">
+            {% for error in form.email.errors %}
+                {{ error }}
+            {% endfor %}
+              </div>
+            {% else %}
+             {{ form.email(id='input-email', class_='form-control form-control-alternative', placeholder='example@example.com', required=True) }}
+            {% endif %}
+              </div>
+              <div class="form-group">
+                  {{ form.feedback.label(class_='form-control-label', for='input-feedback') }}
+                  {{ form.feedback(id='input-feedback', cols=32, rows=4, class_='form-control form-control-alternative', placeholder='Write your feedback here...', required=True) }}
+              </div>
+              <div class="text-center">
+                  <button type="submit" class="btn btn-primary my-4">Send Feedback</button>
+              </div>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% include "includes/footer.html" %}
+
+{% endblock content %}
+
+{% block javascripts %}
+<script src="/static/assets/vendor/clipboard/dist/clipboard.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+});
+</script>
+{% endblock %}
+

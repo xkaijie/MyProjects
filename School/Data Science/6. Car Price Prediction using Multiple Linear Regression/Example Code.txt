@@ -1,0 +1,42 @@
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
+
+# Load data
+data = pd.read_csv('car_price_data.csv')
+
+# Data preparation
+data = data.drop(columns=['CarID'])
+label_encoder = LabelEncoder()
+
+# Convert categorical features
+categorical_features = data.select_dtypes(include=['object']).columns
+for feature in categorical_features:
+    data[feature] = label_encoder.fit_transform(data[feature])
+
+# Feature scaling
+scaler = StandardScaler()
+X = data.drop(columns=['Price'])
+y = data['Price']
+X_scaled = scaler.fit_transform(X)
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=42)
+
+# Train model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Predict
+y_pred = model.predict(X_test)
+
+# Evaluate
+r2 = r2_score(y_test, y_pred)
+mae = mean_absolute_error(y_test, y_pred)
+rmse = mean_squared_error(y_test, y_pred, squared=False)
+
+print(f'R² Score: {r2:.2f}')
+print(f'Mean Absolute Error: {mae:.2f}')
+print(f'Root Mean Squared Error: {rmse:.2f}')

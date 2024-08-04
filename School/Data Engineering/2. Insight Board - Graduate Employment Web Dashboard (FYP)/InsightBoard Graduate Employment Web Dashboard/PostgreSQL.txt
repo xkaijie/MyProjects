@@ -1,0 +1,66 @@
+# (Microsoft Visual Studio Code Terminal)
+python -m venv myenv
+#activate virutal environment
+ .\myenv\Scripts\Activate
+
+# if encountered error
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# get template requirements
+pip install -r requirements.txt
+
+# (Microsoft Visual Studio Code Terminal)
+pip install pandas psycopg2-binary SQLAlchemy
+import pandas as pd
+
+# Replace 'your_file.xlsx' with the path to your Excel file
+excel_data = pd.read_csv('GraduateEmploymentSurveyNTUNUSSITSMUSUSSSUTD.csv')
+print(excel_data.head())  # Prints the first 5 rows of your dataframe to check the data
+
+-------------------------------------------------------------------------------------------
+# PGADMIN
+# Create Table (PGAdmin)
+CREATE TABLE graduate_employment (
+    year INT NOT NULL,
+    university VARCHAR(255) NOT NULL,
+    school VARCHAR(255),
+    degree VARCHAR(255) NOT NULL,
+    degree_category VARCHAR(255),
+    employment_rate_overall NUMERIC(5,2),
+    employment_rate_ft_perm NUMERIC(5,2),
+    basic_monthly_mean NUMERIC,
+    basic_monthly_median NUMERIC,
+    gross_monthly_mean NUMERIC,
+    gross_monthly_median NUMERIC,
+    gross_mthly_25_percentile NUMERIC,
+    gross_mthly_75_percentile NUMERIC
+);
+
+GRANT ALL PRIVILEGES ON TABLE graduate_employment TO postgres;
+
+COPY graduate_employment FROM 'C:\\GraduateEmployment_cleaned.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', NULL 'na');
+
+
+ALTER TABLE graduate_employment
+ADD COLUMN id SERIAL PRIMARY KEY;
+
+-- Table: public.feedback
+
+-- DROP TABLE IF EXISTS public.feedback;
+
+CREATE TABLE IF NOT EXISTS public.feedback
+(
+    id integer NOT NULL DEFAULT nextval('feedback_id_seq'::regclass),
+    name character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    feedback text COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT feedback_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.feedback
+    OWNER to postgres;
+
+GRANT ALL ON TABLE public.feedback TO postgres WITH GRANT OPTION;

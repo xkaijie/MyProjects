@@ -1,0 +1,11 @@
+City,Age,Smoke,HappinessIndex,Healthy
+Mumbai,24,Yes,241,Yes
+London,80,No,928,No
+NewYork,38,Yes,,Yes
+NewYork,22,Yes,786,Yes
+NewYork,36,Yes,967,Yes
+London,,Yes,665,Yes
+Mumbai,17,No,293,No
+NewYork,28,No,494,Yes
+Mumbai,45,No,707,No
+London,29,Yes,599,No
